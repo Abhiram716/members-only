@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../controllers/userController");
-const strategy = require("../strategy/local");
+
+const UserController = require("../controllers/userController");
 const passport = require("passport");
 
-strategy.initialize(passport);
+const local = require("../strategy/local");
 
 router.get("/", (req, res) => {
     res.render("../views/home.ejs");
@@ -18,14 +18,21 @@ router.get("/sign-up", (req, res) => {
     res.render("../views/sign-up-form.ejs");
 });
 
-router.post("/sign-up", User.addUser);
+router.post("/sign-up", UserController.addUser);
+
+router.get("/login-failure", (req, res) => {
+    res.send("<h1>Failed</h1>");
+});
+
+router.get("/login-sulogin-success", (req, res) => {
+    res.send("<h1>success</h1>");
+});
 
 router.post(
     "/login",
     passport.authenticate("local", {
-        successRedirect: "/sign-up",
-        failureRedirect: "/api/v1/login",
-        failureFlash: true,
+        failureRedirect: "/login-failure",
+        successRedirect: "login-success",
     })
 );
 
